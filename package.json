@@ -1,6 +1,6 @@
 {
   "name": "taro-ext-canvas",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.1",
   "browser": "dist/index.umd.js",
   "module": "dist/index.esm.js",
   "main": "dist/index.js",
@@ -34,7 +34,7 @@
   ],
   "author": "DevonCorey",
   "license": "MIT",
-  "homepage": "",
+  "homepage": "https://github.com/814704261/taro-ext-canvas",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.3",
     "@rollup/plugin-json": "^6.1.0",
