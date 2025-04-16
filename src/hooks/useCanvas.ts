@@ -30,7 +30,38 @@ export const useCanvas = (id: string) => {
     return canvasCore.current.draw(data)
   }
 
+  function canvasToTempFilePath() {
+    if (!canvasCore.current) {
+      throw new Error('Canvas has not been initialized yet')
+    }
+    return Taro.canvasToTempFilePath({
+      canvasId: id,
+      canvas: canvasCore.current.getCanvasNode()
+    })
+  }
+
+  function resize() {
+    nextTick(() => {
+      Taro.createSelectorQuery()
+        .select(`#${id}`)
+        .fields({ size: true, node: true })
+        .exec((res) => {
+          const node = res[0]
+          if (!node) {
+            return
+          }
+          if (!canvasCore.current) {
+            canvasCore.current = new TaroExtCanvas(node)
+          } else {
+            canvasCore.current.updateCanvasSize(node.width, node.height)
+          }
+        })
+    })
+  }
+
   return {
-    draw
+    draw,
+    resize,
+    canvasToTempFilePath
   }
 }

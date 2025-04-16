@@ -9,6 +9,10 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
     super(nodeRef)
   }
 
+  public getCanvasNode() {
+    return this.CanvasNode
+  }
+
   private saveLastDrawPosition(x: number, y: number, w: number, h: number) {
     this.lastDrawPosition.x = x
     this.lastDrawPosition.y = y
