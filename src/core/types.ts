@@ -76,6 +76,8 @@ export namespace ITaroExtCanvas {
     radius?: number
     /** 不透明度 - 默认值 1 */
     opacity?: number
+    /** 当图片加载失败时是否抛出错误 - 默认 false */
+    throwError?: boolean
   }
 
 

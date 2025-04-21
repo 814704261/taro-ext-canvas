@@ -36,6 +36,9 @@ export class TaroExtCanvasBase {
     const { pixelRatio } = Taro.getWindowInfo()
     this.CanvasNode.width = width * pixelRatio
     this.CanvasNode.height = height * pixelRatio
+    this.ctx = this.CanvasNode.getContext('2d') as CanvasRenderingContext2D
+    this.ctx.scale(pixelRatio, pixelRatio)
+
     this.canvasNaturalSize.width = width
     this.canvasNaturalSize.height = height
     this.clacToPxCache.clear()

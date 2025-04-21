@@ -41,21 +41,25 @@ export const useCanvas = (id: string) => {
   }
 
   function resize() {
-    nextTick(() => {
-      Taro.createSelectorQuery()
-        .select(`#${id}`)
-        .fields({ size: true, node: true })
-        .exec((res) => {
-          const node = res[0]
-          if (!node) {
-            return
-          }
-          if (!canvasCore.current) {
-            canvasCore.current = new TaroExtCanvas(node)
-          } else {
-            canvasCore.current.updateCanvasSize(node.width, node.height)
-          }
-        })
+    return new Promise<void>((resolve, reject) => {
+      nextTick(() => {
+        Taro.createSelectorQuery()
+          .select(`#${id}`)
+          .fields({ size: true, node: true })
+          .exec((res) => {
+            const node = res[0]
+            if (!node) {
+              reject(new Error('not found canvas instance'))
+              return
+            }
+            if (!canvasCore.current) {
+              canvasCore.current = new TaroExtCanvas(node)
+            } else {
+              canvasCore.current.updateCanvasSize(node.width, node.height)
+            }
+            resolve()
+          })
+      })
     })
   }
 

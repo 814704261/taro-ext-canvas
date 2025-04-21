@@ -118,7 +118,8 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
     h,
     mode = IMAGE_MODES.scaleToFill,
     radius = 0,
-    opacity = 1
+    opacity = 1,
+    throwError = false
   }: ITaroExtCanvas.DrawImageOption) {
     try {
       this.ctx.save()
@@ -170,6 +171,9 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
       this.ctx.restore()
     } catch (err) {
       console.warn('DrawImage captured an error: ', err)
+      if (throwError) {
+        throw new err
+      }
     }
   }
 
