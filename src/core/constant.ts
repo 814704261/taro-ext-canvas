@@ -3,6 +3,7 @@ import { ITaroExtCanvas } from './types'
 export const DRAW_TYPE: ITaroExtCanvas.DRAW_TYPE = {
   IMAGE: 'IMAGE',
   TEXT: 'TEXT',
+  WRAP_TEXT: 'WRAP_TEXT',
   TRIANGLE: 'TRIANGLE',
   RECTANGLE: 'RECTANGLE',
   CIRCLE: 'CIRCLE'

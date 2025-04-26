@@ -36,6 +36,9 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
         case 'TEXT':
           this.drawText(option)
           break
+        case 'WRAP_TEXT':
+          this.drawNewLineText(option)
+          break
         case 'TRIANGLE':
           this.drawTriangle(option)
           break
@@ -267,8 +270,75 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
       lines.forEach((item: any) => {
         this.ctx.fillText(item.text, item.x, item.y)
       })
-      this.saveLastDrawPosition(x, y, textFirstWidth, lines[lines.length - 1].y + lineHeight)
+      this.saveLastDrawPosition(x, y, maxLineWidth, lines[lines.length - 1].y + lineHeight)
     }
+    this.ctx.restore()
+  }
+
+  public drawNewLineText({
+    value,
+    x,
+    y,
+    maxNum = 1,
+    maxLineWidth = 200,
+    lineHeight,
+    fontSize = 12,
+    fontFamily = 'Sans-serif',
+    fontWeight = 'normal',
+    color = '#000000',
+    indent = 0,
+    overflow = 'ellipsis',
+    textAlign = 'left',
+    textBaseline = 'middle',
+  }: ITaroExtCanvas.DrawWrapTextOption) {
+    x = this.toPx(x)
+    y = this.toPx(y)
+    maxLineWidth = this.toPx(maxLineWidth)
+    indent = this.toPx(indent)
+    lineHeight = lineHeight ? this.toPx(lineHeight) : fontSize * 1.2
+
+    this.ctx.save()
+    this.ctx.fillStyle = color
+    this.ctx.textAlign = textAlign
+    this.ctx.textBaseline = textBaseline
+    this.ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`
+
+    const paragraphs = value.split('\n').slice(0, maxNum)
+    let lastPositionY = y
+    let currentLine = 0
+    for (let i = 0; i < paragraphs.length; i++) {
+      if (currentLine === maxLineWidth) {
+        break
+      }
+      const isFirstLine = i === 0
+      const p = paragraphs[i]
+      const textFirstWidth = this.ctx.measureText(p).width
+      const realTextFirstWidth = isFirstLine ? textFirstWidth + indent : textFirstWidth
+      const positionX = isFirstLine ? x + indent : x
+
+      if (realTextFirstWidth <= maxLineWidth) {
+        this.ctx.fillText(p, positionX, lastPositionY, maxLineWidth)
+        currentLine++
+      } else {
+        const lines = this.wrapText(
+          p,
+          maxLineWidth,
+          maxNum - currentLine,
+          overflow,
+          isFirstLine ? indent : 0,
+          x,
+          lastPositionY,
+          lineHeight
+        )
+        lines.forEach((item: any) => {
+          this.ctx.fillText(item.text, item.x, item.y)
+          lastPositionY += item.y
+          currentLine++
+        })
+      }
+      lastPositionY += lineHeight
+    }
+    this.saveLastDrawPosition(x, y, maxLineWidth, lastPositionY)
     this.ctx.restore()
   }
 

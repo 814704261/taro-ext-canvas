@@ -11,6 +11,8 @@ export namespace ITaroExtCanvas {
     IMAGE: 'IMAGE'
     /** 文本 */
     TEXT: 'TEXT'
+    /** \n换行文本 */
+    WRAP_TEXT: 'WRAP_TEXT'
     /** 三角形 */
     TRIANGLE: 'TRIANGLE'
     /** 矩形 */
@@ -89,6 +91,35 @@ export namespace ITaroExtCanvas {
 
   export interface DrawTextOption extends DrawOption {
     type: DRAW_TYPE['TEXT']
+
+    /** 文本内容 */
+    value: string
+    /** 行数 - 默认 1 */
+    maxNum?: number
+    /** 文本最大宽度 - 默认值 200 */
+    maxLineWidth?: number | string
+    /** 行高 - 未指定时默认为字体的1.2倍 */
+    lineHeight?: number
+    /** 字体大小 - 默认值 12 */
+    fontSize?: number
+    /** 字体 - 默认值 Sans-serif */
+    fontFamily?: string
+    /** 字重 - 默认值 normal */
+    fontWeight?: string
+    /** 文字颜色 - 默认值 #000000 */
+    color?: string
+    /** 文本缩进 */
+    indent?: number | string
+    /** 溢出文本提示行为 */
+    overflow?: string | 'ellipsis' | 'clip'
+    /** 文本对齐方式 - 默认值 left */
+    textAlign?: CanvasRenderingContext2D["textAlign"]
+    /** 文本基线对齐方式 - 默认值 middle */
+    textBaseline?: CanvasRenderingContext2D["textBaseline"]
+  }
+
+  export interface DrawWrapTextOption extends DrawOption {
+    type: DRAW_TYPE['WRAP_TEXT']
 
     /** 文本内容 */
     value: string
@@ -209,6 +240,7 @@ export namespace ITaroExtCanvas {
     DrawTextOption |
     DrawTriangleOption |
     DrawRectangleOption |
-    DrawCircleOption
+    DrawCircleOption |
+    DrawWrapTextOption
 }
 
