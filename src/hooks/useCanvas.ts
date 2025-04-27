@@ -63,9 +63,30 @@ export const useCanvas = (id: string) => {
     })
   }
 
+  /**
+   * 计算文本高度
+   * @param {Object} options 计算文本高度配置
+   * @param {string} options.text 文本内容
+   * @param {number} options.tmaxWidth 最长宽度
+   * @param {boolean} options.hasBreak 是否处理换行符 默认 false
+   * @param {number} options.fontSize 字体大小 - 默认 12px
+   * @param {string} options.fontFamily 字体 - 默认 Sans-serif
+   * @param {string} options.fontWeight 字重 - 默认 normal
+   * @param {number} options.lineHeight 行高 - 默认 字体大小 * 1.2
+   * @param {Function} options.onPostCalculate 计算结果回调 - 会在计算完成后被调用，并将计算结果和 ctx 与 canvas 节点传入，然后回调返回的新值会作为最终结果
+   * @returns {number}
+   */
+  function calcWrapTextHeight(options: ITaroExtCanvas.CalcWrapTextHeightOptions): number {
+    if (!canvasCore.current) {
+      throw new Error('calcWrapTextHeight error: Canvas has not been initialized yet')
+    }
+    return canvasCore.current.calcWrapTextHeight(options)
+  }
+
   return {
     draw,
     resize,
-    canvasToTempFilePath
+    canvasToTempFilePath,
+    calcWrapTextHeight
   }
 }

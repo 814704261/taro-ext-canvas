@@ -242,5 +242,18 @@ export namespace ITaroExtCanvas {
     DrawRectangleOption |
     DrawCircleOption |
     DrawWrapTextOption
+
+
+  export interface CalcWrapTextHeightOptions {
+    text: string
+    maxWidth: number
+    maxLine?: number
+    hasBreak?: boolean
+    fontSize?: number
+    fontFamily?: string
+    fontWeight?: string
+    lineHeight?: number
+    onPostCalculate?(result: number, ctx: CanvasRenderingContext2D, canvas: Taro.Canvas): number
+  }
 }
 

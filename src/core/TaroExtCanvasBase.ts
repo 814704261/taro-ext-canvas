@@ -257,6 +257,63 @@ export class TaroExtCanvasBase {
     }
   }
 
+  /**
+   * 计算文本高度
+   * @param {Object} options 计算文本高度配置
+   * @param {string} options.text 文本内容
+   * @param {number} options.tmaxWidth 最长宽度
+   * @param {boolean} options.hasBreak 是否处理换行符 默认 false
+   * @param {number} options.fontSize 字体大小 - 默认 12px
+   * @param {string} options.fontFamily 字体 - 默认 Sans-serif
+   * @param {string} options.fontWeight 字重 - 默认 normal
+   * @param {number} options.lineHeight 行高 - 默认 字体大小 * 1.2
+   * @param {Function} options.onPostCalculate 计算结果回调 - 会在计算完成后被调用，并将计算结果和 ctx 与 canvas 节点传入，然后回调返回的新值会作为最终结果
+   * @returns {number}
+   */
+  public calcWrapTextHeight({
+    text,
+    maxWidth,
+    maxLine = 0,
+    hasBreak = false,
+    fontSize = 12,
+    fontFamily = 'Sans-serif',
+    fontWeight = 'normal',
+    lineHeight,
+    onPostCalculate
+  }: ITaroExtCanvas.CalcWrapTextHeightOptions): number {
+    maxWidth = this.toPx(maxWidth)
+    let lines = hasBreak ? text.split('\n') : [text]
+    lines = maxLine ? lines.splice(0, maxLine) : lines
+    lineHeight = lineHeight ? this.toPx(lineHeight) : fontSize * 1.2
+    this.ctx.save()
+    this.ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`
+    let totalLines = 0
+    for (let i = 0; i < lines.length; i++) {
+      const paragraphs = lines[i]
+      if (this.ctx.measureText(paragraphs).width <= maxWidth) {
+        totalLines++
+        continue
+      }
+      const words = paragraphs.split('')
+      let currentWord = ''
+      for (let j = 0; j < words.length; j++) {
+        if (this.ctx.measureText(currentWord).width <= maxWidth) {
+          currentWord += words[j]
+        } else {
+          currentWord = words[j]
+          totalLines++
+        }
+      }
+      if (currentWord) {
+        totalLines++
+      }
+    }
+    this.ctx.restore()
+    totalLines = maxLine ? Math.min(totalLines, maxLine) : totalLines
+    const result = lineHeight * totalLines
+    return onPostCalculate ? onPostCalculate(result, this.ctx, this.CanvasNode) : result
+  }
+
   protected calculateTriangleVertices(
     points: ITaroExtCanvas.TrianglePoint
   ): ITaroExtCanvas.Point[] {
