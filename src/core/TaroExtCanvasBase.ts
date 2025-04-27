@@ -242,18 +242,18 @@ export class TaroExtCanvasBase {
       // 不做处理，直接截断
       return
     }
-
-    const lastLine = lines[lines.length - 1].text
+    const lastIdx = lines.length - 1
+    const lastLine = lines[lastIdx].text
     const ellipsis = overflow === 'ellipsis' ? '...' : overflow
     // 如果当前行还能加省略号
     if (this.ctx.measureText(lastLine + ellipsis).width <= maxLineWidth) {
-      lines[lines.length - 1].text += lastLine
+      lines[lastIdx].text = lastLine + ellipsis
     } else {
       let ellipsisLine = lastLine
       while (ellipsisLine && this.ctx.measureText(ellipsisLine + ellipsis).width > maxLineWidth) {
         ellipsisLine = ellipsisLine.slice(0, -1)
       }
-      lines[lines.length - 1].text = ellipsisLine + ellipsis
+      lines[lastIdx].text = ellipsisLine + ellipsis
     }
   }
 
