@@ -130,7 +130,7 @@ export class TaroExtCanvasBase {
         break
 
       case IMAGE_MODES.aspectFill:
-        if (containerRatio > ratio) {
+        if (ratio > containerRatio) {
           sHeight = imgHeight
           sWidth = sHeight * containerRatio
           sx = (imgWidth - sWidth) / 2
