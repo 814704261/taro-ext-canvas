@@ -307,7 +307,7 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
     let lastPositionY = y
     let currentLine = 0
     for (let i = 0; i < paragraphs.length; i++) {
-      if (currentLine === maxLineWidth) {
+      if (currentLine === maxNum) {
         break
       }
       const isFirstLine = i === 0
@@ -319,6 +319,7 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
       if (realTextFirstWidth <= maxLineWidth) {
         this.ctx.fillText(p, positionX, lastPositionY, maxLineWidth)
         currentLine++
+        lastPositionY += lineHeight
       } else {
         const lines = this.wrapText(
           p,
@@ -330,13 +331,12 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
           lastPositionY,
           lineHeight
         )
-        lines.forEach((item: any) => {
+        lines.forEach((item) => {
           this.ctx.fillText(item.text, item.x, item.y)
-          lastPositionY += item.y
+          lastPositionY += lineHeight
           currentLine++
         })
       }
-      lastPositionY += lineHeight
     }
     this.saveLastDrawPosition(x, y, maxLineWidth, lastPositionY)
     this.ctx.restore()
