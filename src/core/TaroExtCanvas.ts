@@ -275,6 +275,25 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
     this.ctx.restore()
   }
 
+  /**
+   * 绘制换行文本
+   * @param {Object} options 参数
+   * @param {string} options.value 文本内容
+   * @param {number} options.x
+   * @param {number} options.y
+   * @param {number} options.maxNum 最大行数
+   * @param {number} options.maxLineWidth 每行最长宽度
+   * @param {number} options.lineHeight 行高
+   * @param {number} options.fontSize 字体大小
+   * @param {string} options.fontFamily 字体
+   * @param {string} options.fontWeight 字重
+   * @param {string} options.color 颜色
+   * @param {number} options.indent 缩进
+   * @param {string} options.overflow 溢出文本
+   * @param {string} options.textAlign 文本对齐方式
+   * @param {string} options.textBaseline 文本垂直对齐方式
+   * 
+   */
   public drawNewLineText({
     value,
     x,
