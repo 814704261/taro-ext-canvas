@@ -75,7 +75,7 @@ export namespace ITaroExtCanvas {
     /** 模式 */
     mode?: keyof DrawImageMode
     /** 圆角 */
-    radius?: number
+    radius?: number | string
     /** 不透明度 - 默认值 1 */
     opacity?: number
     /** 当图片加载失败时是否抛出错误 - 默认 false */
@@ -246,13 +246,13 @@ export namespace ITaroExtCanvas {
 
   export interface CalcWrapTextHeightOptions {
     text: string
-    maxWidth: number
+    maxWidth: number | string
     maxLine?: number
     hasBreak?: boolean
     fontSize?: number
     fontFamily?: string
     fontWeight?: string
-    lineHeight?: number
+    lineHeight?: number | string
     onPostCalculate?(result: number, ctx: CanvasRenderingContext2D, canvas: Taro.Canvas): number
   }
 }

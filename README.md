@@ -5,6 +5,7 @@
 
 Enhanced Canvas component for Taro framework, providing rich drawing capabilities with simplified API.
 
+
 ## Features
 
 - 🖼️ **Image Drawing**: Supports multiple display modes (scaleToFill, aspectFit, aspectFill, etc.) with rounded corners
@@ -13,6 +14,78 @@ Enhanced Canvas component for Taro framework, providing rich drawing capabilitie
 - 🎨 **Styling Options**: Fill, stroke, shadows, opacity, dashed lines
 - 📐 **Precision Layout**: Pixel-perfect positioning and sizing
 - 🌈 **Performance Optimized**: Efficient drawing operations
+
+
+## 前言
+
+该库所有的测试均以微信小程序环境为准，其它环境未测试，如发现 bug 请提 Issue
+
+### Canvas 适配原理
+
+小程序中使用 rpx 单位, 可以根据屏幕宽度进行自适应。规定屏幕宽为750rpx。如在 iPhone6 上，屏幕宽度为375px，共有750个物理像素，则750rpx = 375px = 750物理像素，1rpx = 0.5px = 1物理像素。
+
+但是实际的渲染大小是以 px 为单位，所以需要统一单位，如果你的canvas组件使用rpx单位设置宽高，那所有的单位应该都用rpx，如果使用px为单位，则使用px。
+
+#### 使用rpx单位 example
+
+```js
+import { useCanvas } from 'taro-ext-canvas'
+const canvas = useCanvas('example')
+
+// 默认传入的数值都为 rpx (坐标， 宽高， 行高)
+canvas.draw([
+  {
+    type: 'IMAGE',
+    x: 0,
+    y: 0,
+    w: 100,
+    h: 100
+  }
+])
+
+```
+
+```wxml
+<Canvas id='example' type='2d'></Canvas>
+```
+
+```wxss
+#example {
+  width: 750rpx;
+  height: 900rpx;
+}
+```
+
+#### 使用px单位 example
+
+```js
+import { useCanvas } from 'taro-ext-canvas'
+const canvas = useCanvas('example')
+
+// 可以传入一个携带单位的数值，具体支持哪些单位可看后文介绍
+canvas.draw([
+  {
+    type: 'IMAGE',
+    x: 0,
+    y: 0,
+    w: '100px',
+    h: '100px'
+  }
+])
+
+```
+
+```wxml
+<Canvas id='example' type='2d'></Canvas>
+```
+
+```wxss
+#example {
+  width: 375Px;
+  height: 450Px;
+}
+```
+
 
 ## Installation
 
