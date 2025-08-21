@@ -6,7 +6,8 @@ export const DRAW_TYPE: ITaroExtCanvas.DRAW_TYPE = {
   WRAP_TEXT: 'WRAP_TEXT',
   TRIANGLE: 'TRIANGLE',
   RECTANGLE: 'RECTANGLE',
-  CIRCLE: 'CIRCLE'
+  CIRCLE: 'CIRCLE',
+  LINE: 'LINE'
 }
 
 export const IMAGE_MODES: ITaroExtCanvas.DrawImageMode = {

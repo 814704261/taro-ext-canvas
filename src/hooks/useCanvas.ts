@@ -83,10 +83,23 @@ export const useCanvas = (id: string) => {
     return canvasCore.current.calcWrapTextHeight(options)
   }
 
+  /**
+   * 测量文本
+   * @param options 
+   * @returns 
+   */
+  function measureText(options: ITaroExtCanvas.MeasureTextOptions) {
+    if (!canvasCore.current) {
+      throw new Error('calcWrapTextHeight error: Canvas has not been initialized yet')
+    }
+    return canvasCore.current.measureText(options)
+  }
+
   return {
     draw,
     resize,
     canvasToTempFilePath,
-    calcWrapTextHeight
+    calcWrapTextHeight,
+    measureText
   }
 }

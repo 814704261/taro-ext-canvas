@@ -314,6 +314,22 @@ export class TaroExtCanvasBase {
     return onPostCalculate ? onPostCalculate(result, this.ctx, this.CanvasNode) : result
   }
 
+  /**
+   * 测量文本
+   */
+  public measureText({
+    fontSize = 12,
+    fontFamily = 'Sans-serif',
+    fontWeight = 'normal',
+    value
+  }: ITaroExtCanvas.MeasureTextOptions) {
+    this.ctx.save()
+    this.ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`
+    const res = this.ctx.measureText(value)
+    this.ctx.restore()
+    return res
+  }
+
   protected calculateTriangleVertices(
     points: ITaroExtCanvas.TrianglePoint
   ): ITaroExtCanvas.Point[] {

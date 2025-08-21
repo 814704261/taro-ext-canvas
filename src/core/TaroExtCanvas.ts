@@ -48,6 +48,8 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
         case 'CIRCLE':
           this.drawCircle(option)
           break
+        case 'LINE':
+          this.drawLine(option)
         default:
           console.warn(`Unrecognized type ${option}`)
       }
@@ -658,6 +660,92 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
     this.ctx.arcTo(x, y + h, x, y, r)
     this.ctx.arcTo(x, y, x + w, y, r)
     this.ctx.closePath()
+  }
+
+  /**
+   * 绘制线段
+   * @param {ITaroExtCanvas.DrawLineOption} options 绘制配置
+   * @returns 
+   */
+  public drawLine({
+    x,
+    y,
+    points,
+    lineWidth = 1,
+    color = '#000000',
+    opacity = 1,
+    lineCap = 'butt',
+    lineJoin = 'miter',
+    miterLimit = 10,
+    lineDash = [],
+    lineDashOffset = 0,
+    shadowBlur = 0,
+    shadowColor = 'transparent',
+    shadowOffsetX = 0,
+    shadowOffsetY = 0,
+    closePath = false,
+    fill = false,
+    fillColor,
+  }: ITaroExtCanvas.DrawLineOption) {
+    if (points.length == 0) {
+      console.warn('绘制线段需要至少2个点')
+      return
+    }
+    x = this.toPx(x)
+    y = this.toPx(y)
+    const newPoints = points.map(v => {
+      return {
+        x: this.toPx(v.x),
+        y: this.toPx(v.y)
+      }
+    })
+    // 保存当前上下文状态
+    this.ctx.save()
+
+    // 设置全局透明度
+    this.ctx.globalAlpha = opacity
+
+    // 设置线条样式
+    this.ctx.lineWidth = lineWidth
+    this.ctx.strokeStyle = color
+    this.ctx.lineCap = lineCap
+    this.ctx.lineJoin = lineJoin
+    this.ctx.miterLimit = miterLimit
+    // 设置虚线模式
+    if (lineDash.length > 0) {
+      this.ctx.setLineDash(lineDash)
+      this.ctx.lineDashOffset = lineDashOffset
+    }
+
+    // 设置阴影
+    if (shadowBlur > 0 || shadowOffsetX !== 0 || shadowOffsetY !== 0) {
+      this.ctx.shadowBlur = shadowBlur
+      this.ctx.shadowColor = shadowColor
+      this.ctx.shadowOffsetX = shadowOffsetX
+      this.ctx.shadowOffsetY = shadowOffsetY
+    }
+
+    // 开始绘制路径
+    this.ctx.beginPath()
+    this.ctx.moveTo(x, y)
+    for (let i = 0; i < newPoints.length; i++) {
+      this.ctx.lineTo(newPoints[i].x, newPoints[i].y)
+    }
+    // 是否闭合路径
+    if (closePath) {
+      this.ctx.closePath()
+    }
+
+    // 是否填充
+    if (fill) {
+      this.ctx.fillStyle = fillColor || color
+      this.ctx.fill()
+    }
+
+    // 描边
+    this.ctx.stroke()
+    // 恢复上下文状态
+    this.ctx.restore()
   }
 }
 

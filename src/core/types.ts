@@ -19,6 +19,8 @@ export namespace ITaroExtCanvas {
     RECTANGLE: 'RECTANGLE'
     /** 圆形 */
     CIRCLE: 'CIRCLE'
+    /** 线段 */
+    LINE: 'LINE'
   }
 
   export interface DrawOption {
@@ -99,7 +101,7 @@ export namespace ITaroExtCanvas {
     /** 文本最大宽度 - 默认值 200 */
     maxLineWidth?: number | string
     /** 行高 - 未指定时默认为字体的1.2倍 */
-    lineHeight?: number
+    lineHeight?: number | string
     /** 字体大小 - 默认值 12 */
     fontSize?: number
     /** 字体 - 默认值 Sans-serif */
@@ -128,7 +130,7 @@ export namespace ITaroExtCanvas {
     /** 文本最大宽度 - 默认值 200 */
     maxLineWidth?: number | string
     /** 行高 - 未指定时默认为字体的1.2倍 */
-    lineHeight?: number
+    lineHeight?: number | string
     /** 字体大小 - 默认值 12 */
     fontSize?: number
     /** 字体 - 默认值 Sans-serif */
@@ -203,7 +205,7 @@ export namespace ITaroExtCanvas {
     /** 不透明度 */
     opacity?: number
     /** 圆角 */
-    radius?: number
+    radius?: number | string
   }
 
   export interface DrawTriangleOption extends DrawShapeOption {
@@ -226,7 +228,7 @@ export namespace ITaroExtCanvas {
     type: DRAW_TYPE['CIRCLE']
 
     /** 半径 */
-    radius: number
+    radius: number | string
     /** 起始角度，默认0 */
     startAngle?: number
     /** 结束角度，默认2π (360deg) */
@@ -235,13 +237,50 @@ export namespace ITaroExtCanvas {
     anticlockwise?: boolean
   }
 
+  export interface DrawLineOption extends DrawOption {
+    type: DRAW_TYPE['LINE']
+    /** 多个点的坐标数组 */
+    points: Array<{ x: number | string; y: number | string }>
+    /** 线条宽度，默认1 */
+    lineWidth?: number
+    /** 线条颜色，默认黑色 */
+    color?: string
+    /** 线条透明度，默认1 */
+    opacity?: number
+    /** 端点样式，默认'butt' */
+    lineCap?: CanvasLineCap
+    /** 连接点样式，默认'miter' */
+    lineJoin?: CanvasLineJoin
+    /** 斜接限制，默认10 */
+    miterLimit?: number
+    /** 虚线模式，默认[] */
+    lineDash?: number[]
+    /** 虚线偏移量，默认0 */
+    lineDashOffset?: number
+    /** 阴影模糊度，默认0 */
+    shadowBlur?: number
+    /** 阴影颜色，默认透明 */
+    shadowColor?: string
+    /** 阴影X偏移，默认0 */
+    shadowOffsetX?: number
+    /** 阴影Y偏移，默认0 */
+    shadowOffsetY?: number
+    /** 是否闭合路径，默认false */
+    closePath?: boolean
+    /** 是否填充，默认false */
+    fill?: boolean
+    /** 填充颜色，默认与线条相同 */
+    fillColor?: string
+  }
+
   export type DrawData =
     DrawImageOption |
     DrawTextOption |
     DrawTriangleOption |
     DrawRectangleOption |
     DrawCircleOption |
-    DrawWrapTextOption
+    DrawWrapTextOption |
+    DrawLineOption
 
 
   export interface CalcWrapTextHeightOptions {
@@ -254,6 +293,13 @@ export namespace ITaroExtCanvas {
     fontWeight?: string
     lineHeight?: number | string
     onPostCalculate?(result: number, ctx: CanvasRenderingContext2D, canvas: Taro.Canvas): number
+  }
+
+  export interface MeasureTextOptions {
+    value: string
+    fontWeight?: string
+    fontFamily?: string
+    fontSize?: number
   }
 }
 
