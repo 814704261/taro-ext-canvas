@@ -30,11 +30,12 @@ export const useCanvas = (id: string) => {
     return canvasCore.current.draw(data)
   }
 
-  function canvasToTempFilePath() {
+  function canvasToTempFilePath(option: Partial<Taro.canvasToTempFilePath.Option> = {}) {
     if (!canvasCore.current) {
       throw new Error('Canvas has not been initialized yet')
     }
     return Taro.canvasToTempFilePath({
+      ...option,
       canvasId: id,
       canvas: canvasCore.current.getCanvasNode()
     })
@@ -85,8 +86,8 @@ export const useCanvas = (id: string) => {
 
   /**
    * 测量文本
-   * @param options 
-   * @returns 
+   * @param options
+   * @returns
    */
   function measureText(options: ITaroExtCanvas.MeasureTextOptions) {
     if (!canvasCore.current) {
