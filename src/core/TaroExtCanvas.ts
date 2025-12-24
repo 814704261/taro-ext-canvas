@@ -5,10 +5,6 @@ import { IMAGE_MODES } from './constant'
 export class TaroExtCanvas extends TaroExtCanvasBase {
   private readonly lastDrawPosition: ITaroExtCanvas.LastDrawPosition = { x: 0, y: 0, w: 0, h: 0 }
 
-  constructor(nodeRef: ITaroExtCanvas.CanvasNodeInfo) {
-    super(nodeRef)
-  }
-
   public getCanvasNode() {
     return this.CanvasNode
   }
@@ -67,7 +63,7 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
 
   /**
    * 绘制图片（支持多种显示模式和圆角效果）
-   * 
+   *
    * @param {Object} options 图片绘制配置
    * @param {string} options.url 图片资源地址（支持本地路径/网络URL/base64）
    * @param {number} options.x 绘制区域左上角x坐标（单位：px）
@@ -89,7 +85,7 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
    *   - 'bottomRight'：右下角
    * @param {number} [options.radius=0] 圆角半径（单位：px），0表示直角
    * @param {number} [options.opacity=1] 透明度（0-1）
-   * 
+   *
    * @example
    * // 绘制圆角头像（居中裁剪）
    * await drawImage({
@@ -102,7 +98,7 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
    *   radius: 75,
    *   opacity: 0.9
    * });
-   * 
+   *
    * @example
    * // 绘制原始大小的图片
    * await drawImage({
@@ -110,7 +106,7 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
    *   x: 0,
    *   y: 0
    * });
-   * 
+   *
    * @async
    * @throws {Error} 当图片加载失败时抛出异常
    * @see IMAGE_MODES 查看所有可用的图片模式常量
@@ -184,7 +180,7 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
 
   /**
    * 绘制文本（支持自动换行和文本溢出处理）
-   * 
+   *
    * @param {Object} options 文本绘制配置
    * @param {string} options.value 要绘制的文本内容
    * @param {number} options.x 文本起始x坐标（单位：px）
@@ -203,7 +199,7 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
    *     - 'xxx': 自定义
    * @param {string} [options.textAlign='left'] 水平对齐方式（left|center|right）
    * @param {string} [options.textBaseline='middle'] 垂直对齐方式（top|middle|bottom）
-   * 
+   *
    * @example
    * // 绘制自动换行文本
    * drawText({
@@ -214,7 +210,7 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
    *   fontSize: 14,
    *   color: '#333'
    * });
-   * 
+   *
    * @example
    * // 绘制单行省略文本
    * drawText({
@@ -241,6 +237,8 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
     overflow = 'ellipsis',
     textAlign = 'left',
     textBaseline = 'middle',
+    shadow = [],
+    stroke
   }: ITaroExtCanvas.DrawTextOption) {
     x = this.toPx(x)
     y = this.toPx(y)
@@ -254,9 +252,37 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
     this.ctx.textBaseline = textBaseline
     this.ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`
 
+    const drawSingleLine = (
+      text: string,
+      drawX: number,
+      drawY: number,
+      maxWidth?: number
+    ) => {
+      for (let i = 0; i < shadow.length; i++) {
+        const shadowConfig = shadow[i]
+        this.ctx.save()
+        this.ctx.shadowColor = shadowConfig.color
+        this.ctx.shadowBlur = shadowConfig.blur || 0
+        this.ctx.shadowOffsetX = shadowConfig.x || 0
+        this.ctx.shadowOffsetY = shadowConfig.y || 0
+        this.ctx.fillText(text, drawX, drawY, maxWidth)
+        this.ctx.restore()
+      }
+
+      if (stroke) {
+        this.ctx.save()
+        this.ctx.strokeStyle = stroke.color
+        this.ctx.lineWidth = stroke.width || 1
+        this.ctx.strokeText(text, drawX, drawY, maxWidth)
+        this.ctx.restore()
+      }
+
+      this.ctx.fillText(text, drawX, drawY, maxWidth)
+    }
+
     const textFirstWidth = this.ctx.measureText(value).width
     if (textFirstWidth + indent <= maxLineWidth) {
-      this.ctx.fillText(value, x + indent, y, maxLineWidth)
+      drawSingleLine(value, x + indent, y, maxLineWidth)
       this.saveLastDrawPosition(x, y, textFirstWidth, y + lineHeight)
     } else {
       const lines = this.wrapText(
@@ -270,7 +296,7 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
         lineHeight
       )
       lines.forEach((item: any) => {
-        this.ctx.fillText(item.text, item.x, item.y)
+        drawSingleLine(item.text, item.x, item.y)
       })
       this.saveLastDrawPosition(x, y, maxLineWidth, lines[lines.length - 1].y + lineHeight)
     }
@@ -294,7 +320,7 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
    * @param {string} options.overflow 溢出文本
    * @param {string} options.textAlign 文本对齐方式
    * @param {string} options.textBaseline 文本垂直对齐方式
-   * 
+   *
    */
   public drawNewLineText({
     value,
@@ -311,6 +337,8 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
     overflow = 'ellipsis',
     textAlign = 'left',
     textBaseline = 'middle',
+    shadow = [],
+    stroke
   }: ITaroExtCanvas.DrawWrapTextOption) {
     x = this.toPx(x)
     y = this.toPx(y)
@@ -323,6 +351,34 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
     this.ctx.textAlign = textAlign
     this.ctx.textBaseline = textBaseline
     this.ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`
+
+    const drawSingleLine = (
+      text: string,
+      drawX: number,
+      drawY: number,
+      maxWidth?: number
+    ) => {
+      for (let i = 0; i < shadow.length; i++) {
+        const shadowConfig = shadow[i]
+        this.ctx.save()
+        this.ctx.shadowColor = shadowConfig.color
+        this.ctx.shadowBlur = shadowConfig.blur || 0
+        this.ctx.shadowOffsetX = shadowConfig.x || 0
+        this.ctx.shadowOffsetY = shadowConfig.y || 0
+        this.ctx.fillText(text, drawX, drawY, maxWidth)
+        this.ctx.restore()
+      }
+
+      if (stroke) {
+        this.ctx.save()
+        this.ctx.strokeStyle = stroke.color
+        this.ctx.lineWidth = stroke.width || 1
+        this.ctx.strokeText(text, drawX, drawY, maxWidth)
+        this.ctx.restore()
+      }
+
+      this.ctx.fillText(text, drawX, drawY, maxWidth)
+    }
 
     const paragraphs = value.split('\n').slice(0, maxNum)
     let lastPositionY = y
@@ -338,7 +394,7 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
       const positionX = isFirstLine ? x + indent : x
 
       if (realTextFirstWidth <= maxLineWidth) {
-        this.ctx.fillText(p, positionX, lastPositionY, maxLineWidth)
+        drawSingleLine(p, positionX, lastPositionY, maxLineWidth)
         currentLine++
         lastPositionY += lineHeight
       } else {
@@ -353,7 +409,7 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
           lineHeight
         )
         lines.forEach((item) => {
-          this.ctx.fillText(item.text, item.x, item.y)
+          drawSingleLine(item.text, item.x, item.y)
           lastPositionY += lineHeight
           currentLine++
         })
@@ -365,7 +421,7 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
 
   /**
    * 绘制三角形（支持普通三角形和等边三角形）
-   * 
+   *
    * @param {Object} options 绘制配置
    * @param {Array<{x: number, y: number}>|Object} options.points 顶点坐标或等边三角形配置
    * @param {Array} options.points.vertices 自定义三角形的三个顶点坐标（当未指定mode时）
@@ -387,7 +443,7 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
    * @param {number} options.shadow.offsetX 阴影水平偏移
    * @param {number} options.shadow.offsetY 阴影垂直偏移
    * @param {number} [options.opacity=1] 透明度（0-1）
-   * 
+   *
    * @example
    * // 绘制自定义三角形
    * drawTriangle({
@@ -398,7 +454,7 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
    *   ],
    *   fillStyle: 'red'
    * });
-   * 
+   *
    * @example
    * // 绘制等边三角形
    * drawTriangle({
@@ -459,7 +515,7 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
 
   /**
    * 绘制矩形（支持直角和圆角）
-   * 
+   *
    * @param {Object} options 绘制配置
    * @param {number} options.x 矩形左上角 x 坐标（单位：px）
    * @param {number} options.y 矩形左上角 y 坐标（单位：px）
@@ -478,7 +534,7 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
    * @param {number} options.shadow.offsetY 阴影垂直偏移
    * @param {number} [options.opacity=1] 透明度（0-1）
    * @param {number} [options.radius=0] 圆角半径（单位：px），0 表示直角
-   * 
+   *
    * @example
    * // 绘制蓝色圆角矩形带阴影
    * await drawRectangle({
@@ -495,8 +551,8 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
    *     offsetY: 2
    *   }
    * });
-   * 
-   * @returns 
+   *
+   * @returns
    */
   public drawRectangle({
     x,
@@ -637,18 +693,18 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
 
   /**
    * 创建圆角矩形路径（不包含实际绘制操作）
-   * 
+   *
    * @param {number} x - 矩形左上角 x 坐标（单位：px）
    * @param {number} y - 矩形左上角 y 坐标（单位：px）
    * @param {number} w - 矩形宽度（单位：px）
    * @param {number} h - 矩形高度（单位：px）
    * @param {number} r - 圆角半径（单位：px），值为 0 时绘制直角矩形
-   * 
+   *
    * @example
    * // 创建 100x50 圆角矩形路径（圆角半径10）
    * createRoundRectPath(0, 0, 100, 50, 10);
    * ctx.fill(); // 需要手动填充或描边
-   * 
+   *
    * @private
    * @memberof TaroExtCanvas
    */
@@ -665,7 +721,7 @@ export class TaroExtCanvas extends TaroExtCanvasBase {
   /**
    * 绘制线段
    * @param {ITaroExtCanvas.DrawLineOption} options 绘制配置
-   * @returns 
+   * @returns
    */
   public drawLine({
     x,

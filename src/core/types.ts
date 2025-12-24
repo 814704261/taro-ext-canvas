@@ -91,6 +91,18 @@ export namespace ITaroExtCanvas {
     y: number
   }
 
+  interface IShadow {
+    color: string
+    x?: number
+    y?: number
+    blur?: number
+  }
+
+  interface IStroke {
+    color: string
+    width?: number
+  }
+
   export interface DrawTextOption extends DrawOption {
     type: DRAW_TYPE['TEXT']
 
@@ -118,6 +130,10 @@ export namespace ITaroExtCanvas {
     textAlign?: CanvasRenderingContext2D["textAlign"]
     /** 文本基线对齐方式 - 默认值 middle */
     textBaseline?: CanvasRenderingContext2D["textBaseline"]
+    /** 阴影 */
+    shadow?: IShadow[]
+    /** 文本描边 */
+    stroke?: IStroke
   }
 
   export interface DrawWrapTextOption extends DrawOption {
@@ -147,6 +163,10 @@ export namespace ITaroExtCanvas {
     textAlign?: CanvasRenderingContext2D["textAlign"]
     /** 文本基线对齐方式 - 默认值 middle */
     textBaseline?: CanvasRenderingContext2D["textBaseline"]
+    /** 阴影 */
+    shadow?: IShadow[]
+    /** 文本描边 */
+    stroke?: IStroke
   }
 
   export interface Point {
