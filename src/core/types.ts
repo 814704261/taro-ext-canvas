@@ -312,7 +312,7 @@ export namespace ITaroExtCanvas {
     fontFamily?: string
     fontWeight?: string
     lineHeight?: number | string
-    onPostCalculate?(result: number, ctx: CanvasRenderingContext2D, canvas: Taro.Canvas): number
+    onPostCalculate?(result: number, ctx: CanvasRenderingContext2D, canvas: Taro.Canvas | Taro.OffscreenCanvas): number
   }
 
   export interface MeasureTextOptions {
